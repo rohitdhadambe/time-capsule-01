@@ -1,137 +1,143 @@
-# Time Capsule API
+# 📦 Time Capsule API
 
-A RESTful API service that allows users to create digital time capsules - messages that can only be accessed after a specific unlock date.
+A RESTful API for creating and managing digital time capsules—messages securely stored and accessible only after a specified unlock date.
 
-## Features
+---
 
-- **User Authentication**: Register and login users with JWT token-based authentication
-- **Create Time Capsules**: Store messages with a future unlock date
-- **Unlock Protection**: Capsules require a secret unlock code to access
-- **Time Restrictions**: Capsules can only be accessed after their unlock date
-- **Expiration**: Capsules expire 30 days after their unlock date
-- **Update & Delete**: Capsules can be modified or deleted before unlock time
-- **Pagination**: List user capsules with pagination support
-- **Background Cleanup**: Automatic marking of expired capsules
+## 🚀 Features
 
-## Tech Stack
+* **Secure User Authentication**: Register/login with JWT-based tokens
+* **Time Capsule Creation**: Store messages to be unlocked in the future
+* **Access Control**: Capsules protected by secret unlock codes
+* **Unlock Date Enforcement**: Capsules are only accessible after the unlock time
+* **Expiration Policy**: Capsules expire 30 days post-unlock
+* **Capsule Management**: Update or delete before unlock
+* **Pagination Support**: Paginated capsule listing for efficient access
+* **Automated Cleanup**: Background task for marking expired capsules
 
-- **Backend**: Node.js with Express
-- **Database**: PostgreSQL with Sequelize ORM
-- **Authentication**: JWT (JSON Web Tokens)
-- **Testing**: Jest and Supertest
-- **Background Tasks**: node-cron
+---
 
-## API Endpoints
+## 🧰 Tech Stack
 
-### Authentication
+* **Backend**: Node.js + Express
+* **Database**: PostgreSQL + Sequelize ORM
+* **Authentication**: JWT (JSON Web Tokens)
+* **Testing**: Thunder + Postman
+* **Scheduler**: node-cron for background tasks
 
-- **POST /auth/register** - Register a new user
-- **POST /auth/login** - Login and get JWT token
+---
 
-### Capsules
+## 🔗 API Endpoints
 
-- **POST /capsules** - Create a new time capsule
-- **GET /capsules** - List all user capsules (with pagination)
-- **GET /capsules/:id** - Retrieve a specific capsule (if unlockable and with valid code)
-- **PUT /capsules/:id** - Update a capsule (if not yet unlockable and with valid code)
-- **DELETE /capsules/:id** - Delete a capsule (if not yet unlockable and with valid code)
+### 🧑 Authentication
 
-## Project Structure
+* `POST /auth/register` — Register a new user
+* `POST /auth/login` — Log in and receive a JWT token
+
+### 📦 Capsules
+
+* `POST /capsules` — Create a time capsule
+* `GET /capsules` — Get list of user's capsules (paginated)
+* `GET /capsules/:id` — Get capsule (if unlockable with correct code)
+* `PUT /capsules/:id` — Update a capsule (only before unlock, with valid code)
+* `DELETE /capsules/:id` — Delete a capsule (only before unlock, with valid code)
+
+---
+
+## 🏗️ Project Structure
 
 ```
 time-capsule-api/
 ├── src/
-│   ├── config/       # Configuration files
-│   ├── controllers/  # Route controllers
-│   ├── middlewares/  # Express middlewares
-│   ├── models/       # Database models
-│   ├── routes/       # API routes
-│   ├── services/     # Business logic
-│   ├── utils/        # Utility functions
-│   └── app.js        # Express app setup
-├── tests/            # Test files
-├── .env.example      # Example environment variables
-├── .gitignore        # Git ignore configuration
-├── package.json      # Project dependencies
-└── README.md         # Project documentation
+│   ├── config/        # App configuration files
+│   ├── controllers/   # Route handlers/controllers
+│   ├── middlewares/   # Middleware functions (auth, error handlers, etc.)
+│   ├── models/        # Sequelize models
+│   ├── routes/        # API route definitions
+│   ├── services/      # Business logic and service functions
+│   ├── utils/         # Helper utilities (hashing, date checks, etc.)
+│   └── app.js         # Express app entry point
+├── tests/             # Unit and integration tests
+├── .env.example       # Sample environment config
+├── .gitignore         # Files ignored by Git
+├── package.json       # NPM dependencies and scripts
+└── README.md          # Project documentation
 ```
 
-## Getting Started
+---
 
-### Prerequisites
+## 🧪 Getting Started
 
-- Node.js (v14+ recommended)
-- PostgreSQL
+### ✅ Prerequisites
 
-### Installation
+* Node.js (v14+)
+* PostgreSQL
 
-1. Clone the repository
+### ⚙️ Installation
+
+1. **Clone the repository**
+
 ```bash
 git clone https://github.com/yourusername/time-capsule-api.git
 cd time-capsule-api
 ```
 
-2. Install dependencies
+2. **Install dependencies**
+
 ```bash
 npm install
 ```
 
-3. Set up environment variables
+3. **Configure environment**
+
 ```bash
 cp .env.example .env
-# Edit .env with your configuration
+# Edit the .env file to match your setup (DB credentials, secret keys, etc.)
 ```
 
-4. Start the server
+4. **Run the server**
+
 ```bash
 npm run dev
 ```
 
-### Running Tests
+### 🧪 Running Tests
 
 ```bash
 npm test
 ```
 
-## Capsule Lifecycle
+---
 
-1. **Creation**: User creates a capsule with a message and future unlock date
-2. **Before Unlock**: Capsule can be updated or deleted with the unlock code
-3. **Unlockable**: After unlock date, capsule can be accessed with the unlock code
-4. **Expired**: 30 days after unlock date, capsule is marked as expired and returns 410 Gone
+## 🔄 Capsule Lifecycle
 
-## Development Decisions & Tradeoffs
+1. **Created** — User submits a message and unlock date
+2. **Pending Unlock** — Capsule is locked, editable/deletable with code
+3. **Unlocked** — After unlock date, accessible with unlock code
+4. **Expired** — 30 days post-unlock, capsule returns `410 Gone`
 
-### Security
-- Unlock codes are stored hashed in the database
-- JWT tokens are used for user authentication
-- All capsule operations require proper authentication
+---
 
-### Performance
-- Pagination is implemented for capsule listing
-- Expired capsules are marked in the database to avoid rechecking
-- Background job handles expiration checks
+## 🧠 Design Decisions & Tradeoffs
 
-### Maintainability
-- Clean separation of concerns with controllers, services, and models
-- Comprehensive test suite for all major functionality
-- RESTful API design with standard status codes
+### 🔐 Security
 
-## Future Improvements
+* Unlock codes are hashed using bcrypt before storing
+* JWT-based auth protects all user and capsule operations
+* Access checks ensure capsules are only viewed/modified appropriately
 
-- **Email Notifications**: Send notifications when capsules become unlockable
-- **Rate Limiting**: Implement API rate limiting for security
-- **Shared Capsules**: Allow sharing capsules with specific users
-- **Content Types**: Support for different types of content (images, files, etc.)
-- **Public Capsules**: Option to make capsules publicly accessible
+### ⚡ Performance
 
-## Git Workflow Strategy
+* Capsule list paginated to avoid overloading responses
+* Expired capsules are marked to reduce unnecessary checks
+* Background task (via `node-cron`) handles expiry automation
 
-For this project, we've used a single merge strategy:
-1. Work on a feature branch (e.g., `feature/create-capsule-api`)
-2. Open a pull request for review
-3. Use squash merges to keep Git history clean and readable
+### 🧹 Maintainability
 
+* Clear separation of logic via MVC structure
+* Test suite covers endpoints and logic thoroughly
+* Standardized API with consistent HTTP status codes
 
-## License
-This project is licensed under the MIT License.
+### 🚀 Deployed link
+
+https://time-capsule-47ba.onrender.com/(CreatedEndpoints) --- READY TO TEST>>>!
