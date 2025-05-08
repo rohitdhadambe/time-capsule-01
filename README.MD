@@ -140,4 +140,4 @@ npm test
 
 ### 🚀 Deployed link
 
-https://time-capsule-47ba.onrender.com/(CreatedEndpoints) --- READY TO TEST>>>!
+https://time-capsule-47ba.onrender.com/(CreatedEndpoints) --- READY TO TEST ON POSTMAN OR THUNDER
