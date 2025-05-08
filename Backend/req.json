@@ -1,0 +1,121 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "Time Capsule API",
+    "requests": [
+        {
+            "name": "Register User",
+            "method": "POST",
+            "url": "https://time-capsule-5lw2.onrender.com/auth/register",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": {
+                    "username": "testuser",
+                    "email": "test@example.com",
+                    "password": "password123"
+                }
+            }
+        },
+        {
+            "name": "Login User",
+            "method": "POST",
+            "url": "https://time-capsule-5lw2.onrender.com/auth/login",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": {
+                    "email": "test@example.com",
+                    "password": "password123"
+                }
+            }
+        },
+        {
+            "name": "Create Capsule",
+            "method": "POST",
+            "url": "https://time-capsule-5lw2.onrender.com/capsules",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": {
+                    "title": "My Capsule",
+                    "message": "Hello future!",
+                    "unlockDate": "2025-12-31"
+                }
+            }
+        },
+        {
+            "name": "List Capsules",
+            "method": "GET",
+            "url": "https://time-capsule-5lw2.onrender.com/capsules",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ]
+        },
+        {
+            "name": "Get Capsule by ID",
+            "method": "GET",
+            "url": "https://time-capsule-5lw2.onrender.com/capsules/{{id}}",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ]
+        },
+        {
+            "name": "Update Capsule",
+            "method": "PUT",
+            "url": "https://time-capsule-5lw2.onrender.com/capsules/{{id}}",
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                },
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": {
+                    "title": "Updated Capsule",
+                    "message": "Updated message"
+                }
+            }
+        },
+        {
+            "name": "Delete Capsule",
+            "method": "DELETE",
+            "url": "https://time-capsule-5lw2.onrender.com/capsules/{{id}}",
+            "headers": [
+                {
+                    "name": "Authorization",
+                    "value": "Bearer {{token}}"
+                }
+            ]
+        }
+    ]
+}
