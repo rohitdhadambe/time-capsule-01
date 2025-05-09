@@ -1,11 +1,12 @@
 # 📦 Time Capsule API
 
 A RESTful API for creating and managing digital time capsules—messages securely stored and accessible only after a specified unlock date.
-
-## 🚀 Deployment
-**Base **:  [Click Here](https://time-capsule-47ba.onrender.com/)
-**Health Endpoint** [Check Health](https://time-capsule-47ba.onrender.com/health)
 ---
+## 🚀 Deployment 
+- **Base**: https://time-capsule-47ba.onrender.com/
+- **Health Endpoint** [Check Health](https://time-capsule-47ba.onrender.com/health)
+---
+
 
 ## 🚀 Features
 
