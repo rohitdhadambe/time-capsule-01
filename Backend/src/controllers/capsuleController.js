@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator");
 const Capsule = require("../models/Capsule");
-const { generateUnlockCode } = require("../utils/generateCode");
+const { generateUnlockCode } = require("../../utils/generateCode");
 
 /**
  * Create a new time capsule

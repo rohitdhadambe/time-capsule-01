@@ -70,7 +70,7 @@ const CapsulesPage = () => {
               
               <div className="action-buttons">
   <Link to="/capsules/create" className="btn">
-    Create Capsule-----
+    Create Capsule 
   </Link>
   <Link to="/capsules/update" className="btn">
     Update Capsule-----
