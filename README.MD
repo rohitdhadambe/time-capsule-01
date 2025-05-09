@@ -92,7 +92,7 @@ Backend/
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/time-capsule-api.git
+git clone https://github.com/rohitdhadambe/time-capsule-api.git
 cd time-capsule-api
 ```
 
