@@ -5,7 +5,7 @@ A RESTful API for creating and managing digital time capsules—messages securel
 ---
 
 ## 🚀 Deployment 
-- **Base**: https://time-capsule-47ba.onrender.com/
+- **Base**: https://time-capsule-47ba.onrender.com/(CREATEDENDPOINTS) >>>> CAN BE CHECK ON POSTMAN OR ON THUNDER
 - **Health Endpoint** [Check Health](https://time-capsule-47ba.onrender.com/health)
 
 ---
@@ -26,7 +26,7 @@ A RESTful API for creating and managing digital time capsules—messages securel
 ## 🧰 Tech Stack
 
 * **Backend**: Node.js + Express
-* **Database**: PostgreSQL + Sequelize ORM
+* **Database**: PostgreSQL
 * **Authentication**: JWT (JSON Web Tokens)
 * **Testing**: Thunder + Postman
 * **Scheduler**: node-cron for background tasks
@@ -53,22 +53,29 @@ A RESTful API for creating and managing digital time capsules—messages securel
 ## 🏗️ Project Structure
 
 ```
-time-capsule-api/
-├── src/
-│   ├── config/        # App configuration files
-│   ├── controllers/   # Route handlers/controllers
-│   ├── middlewares/   # Middleware functions (auth, error handlers, etc.)
-│   ├── models/        # Sequelize models
-│   ├── routes/        # API route definitions
-│   ├── services/      # Business logic and service functions
-│   ├── utils/         # Helper utilities (hashing, date checks, etc.)
-│   └── app.js         # Express app entry point
-├── tests/             # Unit and integration tests
-├── .env.example       # Sample environment config
-├── .gitignore         # Files ignored by Git
-├── package.json       # NPM dependencies and scripts
-└── README.md          # Project documentation
-```
+Backend/
+├── node_modules/     # Project dependencies
+├── src/              # Source files
+│ ├── config/         # Configuration files (e.g., DB, environment)
+│ ├── controllers/    # Controller logic for handling requests
+│ ├── middlewares/    # Middleware functions for request processing
+│ ├── models/         # Mongoose or Sequelize models
+│ ├── routes/         # Route definitions
+│ ├── services/       # Business logic/services
+│ └── app.js          # App entry point
+├── test/             # Automated test cases
+│ ├── auth.test.js
+│ └── capsule.test.js
+├── utils/            # Utility/helper functions
+│ └── generateCode.js
+├── .env              # Environment-specific variables (not committed)
+├── .env.example      # Sample env file
+├── .gitignore        # Git ignore rules
+├── package.json      # Project metadata and scripts
+├── pnpm-lock.yaml    # Lock file for pnpm package manager
+├── req.json          # Sample API request/response schema
+├── API TESTING AND DATABASE INTEGRATION.pdf # Documentation
+└── README.md         # Project overview
 
 ---
 
@@ -91,7 +98,7 @@ cd time-capsule-api
 2. **Install dependencies**
 
 ```bash
-npm install
+pnpm install
 ```
 
 3. **Configure environment**
@@ -104,13 +111,13 @@ cp .env.example .env
 4. **Run the server**
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 ### 🧪 Running Tests
 
 ```bash
-npm test
+pnpm test
 ```
 
 ---
