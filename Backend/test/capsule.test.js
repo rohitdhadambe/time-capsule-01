@@ -1,10 +1,10 @@
 require("dotenv").config();
 const request = require("supertest");
 const jwt = require("jsonwebtoken");
-const app = require("./src/app");
-const { sequelize } = require("./src/config/db");
-const User = require("./src/models/User");
-const Capsule = require("./src/models/Capsule");
+const app = require("../src/app");
+const { sequelize } = require("../src/config/db");
+const User = require("../src/models/User");
+const Capsule = require("../src/models/Capsule");
 
 jest.setTimeout(20000); // prevent timeout for DB operations
 

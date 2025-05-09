@@ -1,9 +1,9 @@
 require('dotenv').config();
 const request = require('supertest');
 const jwt = require('jsonwebtoken');
-const app = require('./src/app');
-const { sequelize } = require('./src/config/db');
-const User = require('./src/models/User');
+const app = require('../src/app');
+const { sequelize } = require('../src/config/db');
+const User = require('../src/models/User');
 
 // Extend Jest timeout for DB operations (e.g., CI or slow setups)
 jest.setTimeout(20000);
