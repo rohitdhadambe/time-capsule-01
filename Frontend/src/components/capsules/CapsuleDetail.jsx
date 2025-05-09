@@ -1,4 +1,5 @@
 // src/components/capsules/CapsuleDetail.jsx
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -41,7 +42,13 @@ const CapsuleDetail = ({ preloadedCapsule }) => {
    * @returns {string} Formatted date
    */
   const formatDate = (dateString) => {
-    return format(new Date(dateString), 'MMMM d, yyyy h:mm a');
+    if (!dateString) return 'Unknown date';
+    try {
+      return format(new Date(dateString), 'MMMM d, yyyy h:mm a');
+    } catch (err) {
+      console.error('Error formatting date:', err);
+      return 'Invalid date';
+    }
   };
 
   /**
@@ -61,9 +68,16 @@ const CapsuleDetail = ({ preloadedCapsule }) => {
     
     try {
       const data = await getCapsule(id, unlockCode);
+      
+      // Store the unlock code from the response if available
+      if (data && data.unlock_code) {
+        setUnlockCode(data.unlock_code);
+      }
+      
       setCapsule(data);
       setUnlocked(true);
     } catch (err) {
+      console.error('Error unlocking capsule:', err);
       setError(err.message || 'Invalid unlock code or capsule not found');
     } finally {
       setIsLoading(false);
@@ -74,6 +88,12 @@ const CapsuleDetail = ({ preloadedCapsule }) => {
    * Handle capsule deletion
    */
   const handleDelete = async () => {
+    if (!id) {
+      setError('Invalid capsule ID');
+      setShowDeleteConfirm(false);
+      return;
+    }
+    
     setDeleteLoading(true);
     
     try {
@@ -82,11 +102,22 @@ const CapsuleDetail = ({ preloadedCapsule }) => {
         state: { message: 'Time capsule deleted successfully' } 
       });
     } catch (err) {
+      console.error('Error deleting capsule:', err);
       setError(err.message || 'Failed to delete capsule');
       setShowDeleteConfirm(false);
     } finally {
       setDeleteLoading(false);
     }
+  };
+
+  /**
+   * Split text into paragraphs safely
+   * @param {string} text - Text to split
+   * @returns {string[]} Array of paragraphs
+   */
+  const splitIntoParagraphs = (text) => {
+    if (!text) return ['No message content'];
+    return text.split('\n').filter(p => p.trim() !== '');
   };
 
   return (
@@ -143,28 +174,43 @@ const CapsuleDetail = ({ preloadedCapsule }) => {
               <span className="meta-label">Unlocked:</span>
               <span className="meta-value">{formatDate(capsule.unlock_at)}</span>
             </div>
+            
+            {capsule.unlock_code && (
+              <div className="meta-item">
+                <span className="meta-label">Unlock Code:</span>
+                <span className="meta-value code-value">{capsule.unlock_code}</span>
+              </div>
+            )}
           </div>
           
           <div className="capsule-message">
             <h3>Your Message</h3>
             <div className="message-content">
-              {capsule.message.split('\n').map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
+              {capsule.message ? (
+                splitIntoParagraphs(capsule.message).map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))
+              ) : (
+                <p>No message content</p>
+              )}
             </div>
           </div>
           
           <div className="capsule-actions">
-            <Link to={`/capsules/${id}/edit`} className="btn-edit">
-              Edit Capsule
-            </Link>
-            
-            <button 
-              onClick={() => setShowDeleteConfirm(true)} 
-              className="btn-delete"
-            >
-              Delete Capsule
-            </button>
+            {id && (
+              <>
+                <Link to={`/capsules/${id}/edit`} className="btn-edit">
+                  Edit Capsule
+                </Link>
+                
+                <button 
+                  onClick={() => setShowDeleteConfirm(true)} 
+                  className="btn-delete"
+                >
+                  Delete Capsule
+                </button>
+              </>
+            )}
           </div>
           
           {/* Delete confirmation */}

@@ -1,4 +1,5 @@
 // src/components/capsules/CapsulesList.jsx
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -41,7 +42,7 @@ const CapsulesList = ({ onCapsuleSelect }) => {
     
     try {
       const response = await getUserCapsules(page, limit);
-      setCapsules(response.items || response.capsules || response);
+      setCapsules(response.items || response.capsules || response || []);
       
       // Update pagination if available in response
       if (response.pagination) {
@@ -92,18 +93,21 @@ const CapsulesList = ({ onCapsuleSelect }) => {
     const filtered = searchTerm.trim() === '' 
       ? [...capsules]
       : capsules.filter(capsule => 
+          capsule && capsule.message && 
           capsule.message.toLowerCase().includes(searchTerm.toLowerCase())
         );
     
     // Sort capsules
     return filtered.sort((a, b) => {
+      if (!a || !b) return 0;
+      
       let comparison = 0;
       
       // Handle different field types
       if (sortBy === 'unlock_at' || sortBy === 'created_at') {
-        comparison = new Date(a[sortBy]) - new Date(b[sortBy]);
-      } else {
-        comparison = a[sortBy].localeCompare(b[sortBy]);
+        comparison = new Date(a[sortBy] || 0) - new Date(b[sortBy] || 0);
+      } else if (a[sortBy] && b[sortBy]) {
+        comparison = String(a[sortBy]).localeCompare(String(b[sortBy]));
       }
       
       // Apply sort direction
@@ -117,7 +121,7 @@ const CapsulesList = ({ onCapsuleSelect }) => {
    * @returns {boolean} Whether the capsule is unlocked
    */
   const isUnlocked = (capsule) => {
-    return new Date(capsule.unlock_at) <= new Date();
+    return capsule && capsule.unlock_at && new Date(capsule.unlock_at) <= new Date();
   };
 
   /**
@@ -126,7 +130,13 @@ const CapsulesList = ({ onCapsuleSelect }) => {
    * @returns {string} Formatted date
    */
   const formatDate = (dateString) => {
-    return format(new Date(dateString), 'MMM d, yyyy h:mm a');
+    if (!dateString) return 'Unknown date';
+    try {
+      return format(new Date(dateString), 'MMM d, yyyy h:mm a');
+    } catch (err) {
+      console.error('Error formatting date:', err);
+      return 'Invalid date';
+    }
   };
 
   // Handle refresh with current pagination
@@ -204,45 +214,50 @@ const CapsulesList = ({ onCapsuleSelect }) => {
               </tr>
             </thead>
             <tbody>
-              {sortedAndFilteredCapsules.map(capsule => (
-                <tr key={capsule.id} className={isUnlocked(capsule) ? 'unlocked' : 'locked'}>
-                  <td>{formatDate(capsule.created_at)}</td>
-                  <td>{formatDate(capsule.unlock_at)}</td>
-                  <td className="message-preview">
-                    {capsule.message.length > 50 
-                      ? `${capsule.message.substring(0, 50)}...` 
-                      : capsule.message}
-                  </td>
-                  <td>
-                    <span className={`status-badge ${isUnlocked(capsule) ? 'unlocked' : 'locked'}`}>
-                      {isUnlocked(capsule) ? 'Unlocked' : 'Locked'}
-                    </span>
-                  </td>
-                  <td className="actions">
-                    {isUnlocked(capsule) ? (
-                      <>
-                        <Link 
-                          to={`/capsules/${capsule.id}`}
-                          className="btn-view"
-                          onClick={() => onCapsuleSelect && onCapsuleSelect(capsule)}
-                        >
-                          View
-                        </Link>
-                        <Link 
-                          to={`/capsules/${capsule.id}/edit`}
-                          className="btn-edit"
-                        >
-                          Edit
-                        </Link>
-                      </>
-                    ) : (
-                      <span className="locked-info" title={`Unlocks on ${formatDate(capsule.unlock_at)}`}>
-                        Locked until {formatDate(capsule.unlock_at)}
+              {sortedAndFilteredCapsules.map(capsule => {
+                // Skip rendering if capsule is invalid
+                if (!capsule || !capsule.id) return null;
+                
+                return (
+                  <tr key={capsule.id} className={isUnlocked(capsule) ? 'unlocked' : 'locked'}>
+                    <td>{formatDate(capsule.created_at)}</td>
+                    <td>{formatDate(capsule.unlock_at)}</td>
+                    <td className="message-preview">
+                      {capsule.message && capsule.message.length > 50 
+                        ? `${capsule.message.substring(0, 50)}...` 
+                        : (capsule.message || 'No message')}
+                    </td>
+                    <td>
+                      <span className={`status-badge ${isUnlocked(capsule) ? 'unlocked' : 'locked'}`}>
+                        {isUnlocked(capsule) ? 'Unlocked' : 'Locked'}
                       </span>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="actions">
+                      {isUnlocked(capsule) ? (
+                        <>
+                          <Link 
+                            to={`/capsules/${capsule.id}`}
+                            className="btn-view"
+                            onClick={() => onCapsuleSelect && onCapsuleSelect(capsule)}
+                          >
+                            View
+                          </Link>
+                          <Link 
+                            to={`/capsules/${capsule.id}/edit`}
+                            className="btn-edit"
+                          >
+                            Edit
+                          </Link>
+                        </>
+                      ) : (
+                        <span className="locked-info" title={`Unlocks on ${formatDate(capsule.unlock_at)}`}>
+                          Locked until {formatDate(capsule.unlock_at)}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
           

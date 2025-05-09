@@ -1,16 +1,20 @@
 // src/pages/CapsulesPage.jsx
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import CapsulesList from '../capsules/CapsuleForm';
-import CapsuleForm from '../capsules/CapsulesList';
+import { Routes, Route, useLocation, useNavigate, Link } from 'react-router-dom';
+import CapsuleForm from '../capsules/CapsuleForm';
+import CapsulesList from '../capsules/CapsulesList';
 import CapsuleDetail from '../capsules/CapsuleDetail';
+import UpdateCapsule from '../capsules/UpdateCapsule';
+import DeleteCapsule from '../capsules/DeleteCapsule';
+
 
 /**
  * Main page for time capsule functionality
- * Handles routing between list, detail, create, and edit views
+ * Handles routing between different capsule actions
  */
 const CapsulesPage = () => {
+  
   const location = useLocation();
   const navigate = useNavigate();
   const [notification, setNotification] = useState('');
@@ -32,15 +36,14 @@ const CapsulesPage = () => {
   }, [location, navigate]);
 
   /**
-   * Handle successful capsule creation or update
-   * @param {Object} capsule - The created/updated capsule
+   * Handle successful capsule operations
+   * @param {Object} result - The operation result
+   * @param {string} message - Custom success message
    */
-  const handleCapsuleSuccess = (capsule) => {
-    // Navigate to the capsules list with a success message
+  const handleSuccess = (result, message) => {
+    // Navigate to the capsules home with a success message
     navigate('/capsules', { 
-      state: { 
-        message: capsule.id ? 'Time capsule saved successfully!' : 'Operation completed successfully'
-      } 
+      state: { message: message || 'Operation completed successfully' } 
     });
   };
 
@@ -56,33 +59,165 @@ const CapsulesPage = () => {
         </div>
       )}
       
-      {/* Routing for capsule views */}
       <Routes>
-        {/* List all capsules */}
-        <Route path="/" element={<CapsulesList />} />
+        {/* Home/Dashboard with action buttons */}
+        <Route 
+          path="/" 
+          element={
+            <div className="capsule-dashboard">
+              <h1>Time Capsule Manager</h1>
+              <p>Select an action to manage your time capsules</p>
+              
+              <div className="action-buttons">
+  <Link to="/capsules/create" className="btn">
+    Create Capsule-----
+  </Link>
+  <Link to="/capsules/update" className="btn">
+    Update Capsule-----
+  </Link>
+  <Link to="/capsules/delete" className="btn">
+    Delete Capsule-----
+  </Link>
+  <Link to="/capsules/list" className="btn">
+    List Capsules-----
+  </Link>
+  <Link to="/capsules/details" className="btn">
+    Capsule Details
+  </Link>
+</div>
+            </div>
+          } 
+        />
         
         {/* Create new capsule */}
         <Route 
-          path="/new" 
-          element={<CapsuleForm onSuccess={handleCapsuleSuccess} />} 
+          path="/create" 
+          element={
+            <>
+              <nav className="breadcrumb">
+                <Link to="/capsules">Home</Link> &gt; Create Capsule
+              </nav>
+              <CapsuleForm 
+                onSuccess={(capsule) => handleSuccess(capsule, 'Time capsule created successfully!')} 
+              />
+            </>
+          } 
+        />
+        
+        {/* Update existing capsule */}
+        <Route 
+          path="/update" 
+          element={
+            <>
+              <nav className="breadcrumb">
+                <Link to="/capsules">Home</Link> &gt; Update Capsule
+              </nav>
+              <UpdateCapsule 
+                onSuccess={(capsule) => handleSuccess(capsule, 'Time capsule updated successfully!')}
+                onCancel={() => navigate('/capsules')}
+              />
+            </>
+          } 
+        />
+        
+        {/* Update specific capsule with ID */}
+        <Route 
+          path="/update/:id" 
+          element={
+            <>
+              <nav className="breadcrumb">
+                <Link to="/capsules">Home</Link> &gt; 
+                <Link to="/capsules/update">Update</Link> &gt; Capsule Details
+              </nav>
+              <UpdateCapsule 
+                capsuleId={location.pathname.split('/').pop()}
+                onSuccess={(capsule) => handleSuccess(capsule, 'Time capsule updated successfully!')}
+                onCancel={() => navigate('/capsules/update')}
+              />
+            </>
+          } 
+        />
+        
+        {/* Delete capsule */}
+        <Route 
+          path="/delete" 
+          element={
+            <>
+              <nav className="breadcrumb">
+                <Link to="/capsules">Home</Link> &gt; Delete Capsule
+              </nav>
+              <DeleteCapsule 
+                onSuccess={() => handleSuccess(null, 'Time capsule deleted successfully!')}
+                onCancel={() => navigate('/capsules')}
+              />
+            </>
+          } 
+        />
+        
+        {/* Delete specific capsule with ID */}
+        <Route 
+          path="/delete/:id" 
+          element={
+            <>
+              <nav className="breadcrumb">
+                <Link to="/capsules">Home</Link> &gt; 
+                <Link to="/capsules/delete">Delete</Link> &gt; Confirm Deletion
+              </nav>
+              <DeleteCapsule 
+                capsuleId={location.pathname.split('/').pop()}
+                onSuccess={() => handleSuccess(null, 'Time capsule deleted successfully!')}
+                onCancel={() => navigate('/capsules/delete')}
+              />
+            </>
+          } 
         />
         
         {/* View capsule details */}
-        <Route path="/:id" element={<CapsuleDetail />} />
-        
-        {/* Edit existing capsule */}
         <Route 
-          path="/:id/edit" 
+          path="/details" 
           element={
-            <CapsuleDetail>
-              {(capsule, unlockCode) => (
-                <CapsuleForm 
-                  capsule={capsule} 
-                  unlockCode={unlockCode}
-                  onSuccess={handleCapsuleSuccess}
-                />
-              )}
-            </CapsuleDetail>
+            <>
+              <nav className="breadcrumb">
+                <Link to="/capsules">Home</Link> &gt; Capsule Details
+              </nav>
+              <CapsuleDetail 
+                onBack={() => navigate('/capsules')}
+              />
+            </>
+          } 
+        />
+        
+        {/* View specific capsule details with ID */}
+        <Route 
+          path="/details/:id" 
+          element={
+            <>
+              <nav className="breadcrumb">
+                <Link to="/capsules">Home</Link> &gt; 
+                <Link to="/capsules/details">Details</Link> &gt; Capsule Info
+              </nav>
+              <CapsuleDetail 
+                capsuleId={location.pathname.split('/').pop()}
+                onBack={() => navigate('/capsules/details')}
+              />
+            </>
+          } 
+        />
+        
+        {/* View all capsules */}
+        <Route 
+          path="/list" 
+          element={
+            <>
+              <nav className="breadcrumb">
+                <Link to="/capsules">Home</Link> &gt; List Capsules
+              </nav>
+              <CapsulesList 
+                onViewDetails={(id) => navigate(`/capsules/details/${id}`)}
+                onUpdateCapsule={(id) => navigate(`/capsules/update/${id}`)}
+                onDeleteCapsule={(id) => navigate(`/capsules/delete/${id}`)}
+              />
+            </>
           } 
         />
       </Routes>

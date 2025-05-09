@@ -58,7 +58,7 @@ const Register = () => {
       await register({ username, email, password });
       
       // Redirect to login with success message
-      navigate('/login', { 
+      navigate('/', { 
         state: { message: 'Registration successful! Please log in.' } 
       });
     } catch (err) {
